@@ -3,13 +3,19 @@ const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Initialize Gemini API
-const genAI = new GoogleGenerativeAI('AIzaSyCMzJIEOuR3ba0HzApg5N0icNeQfa6ZZjs');
+// Initialize Gemini API with environment variable
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error('ERROR: GEMINI_API_KEY environment variable is not set. Please create a .env file with your API key.');
+  process.exit(1);
+}
+const genAI = new GoogleGenerativeAI(apiKey);
 const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
 // Store conversation history per session
